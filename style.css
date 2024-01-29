@@ -166,7 +166,7 @@ video{
     margin: auto;
 }
 .popup h2{
-    border: 2px solid black;
+    border: 2px solid var(--bg);
     margin-top: 10%;
     padding: 20px;
     border-radius: 15px;
@@ -217,7 +217,7 @@ video{
     border-radius: 20px;
     right: -5px;
     overflow: hidden;
-    background-color:var(--primary);
+    background-color:var(--wh);
    
     z-index: 1;
     border: 5px solid  var(--orng);
@@ -245,7 +245,7 @@ video{
   
 
   .incorrect {
-    color: red;
+    color: var(--orng);
     position: relative;
 }
 
@@ -253,7 +253,7 @@ video{
     content: "";
     width: 120%;
     height: 2px;
-    background-color: red; /* Adjust the color as needed */
+    background-color: var(--orng); /* Adjust the color as needed */
     position: absolute;
     top: 18px; /* Adjust this value to control the distance between the line and the letter */
     left: -3px;
