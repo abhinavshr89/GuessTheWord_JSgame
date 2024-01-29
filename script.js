@@ -91,8 +91,8 @@ function main(wordLength,remainingAttempts){
   let guess_btn = document.querySelector(".guess-btn");
   var message = document.querySelector(".popup h2")
   var inputBox = document.querySelector("#input");
-  var message = document.querySelector(".message");
-  message.innerHTML = "<h3>Enter the Missing letters</h3>"
+  var message2 = document.querySelector(".message");
+  message2.innerHTML = "<h3>Enter the Missing letters</h3>"
 
 
 
@@ -171,7 +171,7 @@ function main(wordLength,remainingAttempts){
             message.innerHTML="";
           }
           console.log(submittedLetter);
-          message.innerHTML += `<span class="incorrect">${submittedLetter}</span>&nbsp;`;
+          message2.innerHTML += `<span class="incorrect">${submittedLetter}</span>&nbsp;`;
 
           displayAttempts.innerHTML =`Remaining attempts = ${remainingAttempts}`;
          return false;
