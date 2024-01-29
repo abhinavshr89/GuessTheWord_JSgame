@@ -69,17 +69,35 @@ var displayAttempts = document.querySelector(".attempt h4");
 
 
 var popup = document.querySelector(".popup");
+var pointer =1;
+
+
+
+
+                                            /*
+                                            =============================================
+                                              SECTION: Function of the Main Logic of Game
+                                            =============================================
+                                            */
 
 function main(wordLength,remainingAttempts){
-  
-  
+  var wrongLetter ="";
+  var inputField = document.querySelector("#input1");
   displayAttempts.innerHTML =`Remaining attempts = ${remainingAttempts}`;
-
+  var settingsIcon = document.querySelector(".settings-icon img");
+  var settingOptions = document.querySelector(".options-dropdown");
+  settingOptions.style.display= "none";
   var gameBox = document.querySelector(".game-inner-row");
   let guess_btn = document.querySelector(".guess-btn");
   var message = document.querySelector(".popup h2")
   var inputBox = document.querySelector("#input");
-  
+  var message = document.querySelector(".message");
+  message.innerHTML = "<h3>Enter the Missing letters</h3>"
+
+
+
+
+  // -> Below function will add new boxes if the user wants more letters 
   if (wordLength === 6 || wordLength === 7) {
     const additionalBoxesCount = wordLength - 5;  // Calculate the number of additional boxes needed
     
@@ -90,7 +108,7 @@ function main(wordLength,remainingAttempts){
     }
   }
   
-  
+  // This function will place place holders in all the boxes except 1st and last 
   for(let i = 1 ;i<wordLength-1;i++){
     let a = document.querySelector(`.letter-${i}`);
     a.innerHTML=`<div class="placeholder"></div>`;
@@ -130,10 +148,12 @@ function main(wordLength,remainingAttempts){
 
   //HOW SUBMITTED LETTER WILL BE CHECKED
   
-  let pointer = 1;  // Starting the pointer at 1 to skip the first letter
+  // Starting the pointer at 1 to skip the first letter
   
   function checkSubmission(submittedLetter) {
     inputField.value = "";
+    
+    console.log(pointer);
       if (pointer < currentWord.length - 1 && submittedLetter === currentWord[pointer]) {
           let letterBox = document.querySelector(`.letter-${pointer}`);
           letterBox.innerHTML=`${submittedLetter}`;
@@ -141,11 +161,18 @@ function main(wordLength,remainingAttempts){
   
           // Check if the entire word (excluding the first and last letters) has been correctly guessed
           if (pointer === currentWord.length - 1) {
+             
               return true;
           }
       }
        else{
           remainingAttempts--;
+          if(remainingAttempts === 9){
+            message.innerHTML="";
+          }
+          console.log(submittedLetter);
+          message.innerHTML += `<span class="incorrect">${submittedLetter}</span>&nbsp;`;
+
           displayAttempts.innerHTML =`Remaining attempts = ${remainingAttempts}`;
          return false;
        }
@@ -174,62 +201,132 @@ function main(wordLength,remainingAttempts){
   
   
   // HOW GUESS BUTTON WILL WORK ?
+
+function handleGuessButtonClick() {
+  var submittedLetter = document.querySelector("#input1").value.toUpperCase();
   
-  
+  if (checkSubmission(submittedLetter)) {
+    popup.style.display = "flex";
+    message.innerHTML = "Right Answer";
+    removeExtraBoxes(wordLength);
+    guess_btn.removeEventListener('click', handleGuessButtonClick);
+    
+  } else if (remainingAttempts === 0) {
+    popup.style.display = "flex";
+    message.innerHTML = "Oops! Out of attempts";
+    removeExtraBoxes(wordLength);
+    guess_btn.removeEventListener('click', handleGuessButtonClick);
+  } else {
+    // Handle other cases if needed
+  }
+}
 
-  guess_btn.addEventListener('click', () => {
-    var submittedLetter = document.querySelector("#input1").value.toUpperCase();
-  
-    // Check the submitted letter using the checkSubmission function
-    if (checkSubmission(submittedLetter)) {
-      popup.style.display = "flex";
-      message.innerHTML = "Right Answer";
-      removeExtraBoxes(wordLength);
-    } else if (remainingAttempts === 0) {
-      popup.style.display = "flex";
-      message.innerHTML = "Oops! Out of attempts";
-      removeExtraBoxes(wordLength);
-    } else {
-      console.log("Incorrect letter.");
-    }
+// Adding the click event listener to the guess button
+// guess_btn.addEventListener('click', handleGuessButtonClick);
+guess_btn.onclick = function() {
+  handleGuessButtonClick();
+};
 
-  });
 
-// Making the enter do the same work as submit button 
-
-var inputField = document.querySelector("#input1");
-
-inputField.addEventListener('keypress', function (event) {
+function handleEnterKey(event) {
   if (event.key === 'Enter') {
     // Prevent the default behavior of the Enter key (form submission)
     event.preventDefault();
 
-    // Trigger the same logic as when the submit button is clicked
-    var submittedLetter = inputField.value.toUpperCase();
-    if (checkSubmission(submittedLetter)) {
-      popup.style.display = "flex";
-      message.innerHTML = "Right Answer";
-      removeExtraBoxes(wordLength);
-    } else if (remainingAttempts === 0) {
-      popup.style.display = "flex";
-      message.innerHTML = "Oops! Out of attempts";
-      removeExtraBoxes(wordLength);
+    // Trigger a click event on the guess button
+    guess_btn.click();
+    
+   
+  }
+}
+
+// Attach the event listener for the "Enter" key
+// inputField.addEventListener('keypress', handleEnterKey);
+
+inputField.onkeypress = function(event) {
+  handleEnterKey(event);
+};
+
+
+
+
+// =================================
+var fiveLetterGame = document.querySelector(".setting-option-5");
+var sixLetterGame = document.querySelector(".setting-option-6");
+var sevenLetterGame = document.querySelector(".setting-option-7");
+
+
+fiveLetterGame.onclick = function () {
+ 
+  cleanBoxes();
+  main(5, 10);
+}
+
+sixLetterGame.onclick = function () {
+  cleanBoxes();
+
+  main(6, 10); // Adjust the second parameter as needed
+}
+
+sevenLetterGame.onclick = function () {
+  cleanBoxes();
+  
+  main(7, 10); // Adjust the second parameter as needed
+}
+
+settingsIcon.onclick = function() {
+ 
+  if (settingOptions.style.display === "block") {
+    settingOptions.style.display = "none";
+  } else {
+    settingOptions.style.display = "block";
+  }
+};
+
+// function to clear extra stuffs 
+function cleanBoxes() {
+  for (let i = 5; i < 8; i++) {
+    let a = document.querySelector(`.letter-${i}`);
+    if (a) {
+      a.parentNode.removeChild(a);
     } else {
-      console.log("Incorrect letter.");
+      break;
     }
   }
-});
-  // =========================================================
 }
-main(6,10);
+
+// =============================================
+}
+
+
+
+
+
+
+
+
+
+
+
+main(7,10);
 
 var restartButton = document.querySelector("#restart");
 restartButton.addEventListener("click", () => {
   popup.style.display="none";
-
-   main(7,10);
+  console.log("restarting");
+  pointer =1 ;
+  console.log(pointer);
+   main(5,10);
    
 });
+
+
+
+
+
+
+// 
+
 
 
 
